@@ -1,0 +1,40 @@
+name: Flutter APK Build Cloud Engine
+
+on:
+  push:
+    branches:
+      - master # Jab bhi aap main branch par push karenge yeh chal parega
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java Environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Set up Flutter Engine
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Clean Flutter
+        run: flutter clean
+
+      - name: Install Project Dependencies
+        run: flutter pub get
+
+      - name: Build Android Production APK
+        run: flutter build apk --release
+
+      - name: Upload Generated APK Asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: karachi-realestate-app
+          path: build/app/outputs/flutter-apk/app-release.apk
